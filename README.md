@@ -1,2 +1,5 @@
 # brazil-covid-cities-api
-Api to obtain the number of confirmed cases of covid 19.
+API para obter o numero de casos confirmados da COVID-19 no Brasil.
+
+#####Fonte de dados utilizada
+[Brasil.io](https://brasil.io/dataset/covid19/caso)
