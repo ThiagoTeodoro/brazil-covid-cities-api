@@ -8,10 +8,13 @@ const fs = require('fs');
  * os dados da COVID confirmados.
  */
 async function downloadCsvDataCovid(){
+
     try {
 
+        //Local do arquivo que será armazenado.
         let ws = fs.createWriteStream('./src/csvs/dowloaded/ultimosDados.csv');
 
+        //Criando opções da requisição.
         let options = {
             url: 'https://brasil.io/dataset/covid19/caso?format=csv',
             method: 'GET',
@@ -21,19 +24,25 @@ async function downloadCsvDataCovid(){
         //Precisa ser uma promise aqui se não nunca vou ter controler de quando terminou a gravação ou não.
         let result = await new Promise((resolve, reject) => {
 
+            //Realizando requisição.
             request(options).on('error', function(error) {
             
+                //Esse método é acionado quando ocorre um erro HTTP.                
                 console.error(error);       
                 reject(false);
             }).on('close', function(){
         
+                //Esse método é chamado quando o Writer terminar e acionar o Close da requisição http.
                 console.info('Dowload realizado com sucesso!');       
                 resolve(true);
             }).pipe(
+
+                //Aqui passamos o Writer para escrever o arquivo.
                 ws
             );
         });
 
+        //Avaliando resultados
         if(result){
 
             return result
@@ -50,10 +59,7 @@ async function downloadCsvDataCovid(){
 
 
 /**
- * Job Responsável por fazer o Download do CSV do Brasil.io
- * e armazenar esse arquivo  em csvs/dowloaded chamar a função que formata
- * os dados para o padrão csv necessário e então salva esses dados 
- * na pasta /csvs/worked
+ * A FUNÇÃO DA JOB MUDOU VAMOS REESCREVER!!!
  */
 module.exports = async () => {
 
