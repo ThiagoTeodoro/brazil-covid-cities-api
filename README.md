@@ -10,5 +10,5 @@ API para obter o numero de casos confirmados da COVID-19 no Brasil.
 ##### Como usar a API
 
  > Para obter os dados no formato JSON basta acessar via GET https://brazil-covid-cities-api.herokuapp.com/api/city/cases/json
-
+ 
  > Para obter os dados no formato CSV basta acessar via GET https://brazil-covid-cities-api.herokuapp.com/api/city/cases/data.csv
