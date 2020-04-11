@@ -110,10 +110,10 @@ async function writeFileResultCsv(pathToSave){
             if (error) {
 
                 throw `Ocorreu um erro ao tentar gravar o arquivo resultade da operação! Error : ${error}.`;
-                reject(error);
+                reject(false);
             } 
 
-            resolve(data);         
+            resolve(true);         
         });
     });
 }
