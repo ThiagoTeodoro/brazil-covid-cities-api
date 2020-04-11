@@ -1,7 +1,7 @@
 # brazil-covid-cities-api
 API para obter o numero de casos confirmados da COVID-19 no Brasil.
 
-#### Pagína no Projeto
+#### Página no Projeto
 [brazil-covid-cities-api](https://brazil-covid-cities-api.herokuapp.com/)
 
 ##### Fonte de dados utilizada
