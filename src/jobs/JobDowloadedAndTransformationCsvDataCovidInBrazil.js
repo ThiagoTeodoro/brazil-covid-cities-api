@@ -6,6 +6,7 @@ const os = require('os');
 
 const DataCovidInBrazilService = require('../services/DataCovidInBrazilService');
 const LatANdLongCitiesBrazilService = require('../services/LatANdLongCitiesBrazilService');
+const CsvService = require('../services/CsvService');
 
 
 /**
@@ -82,40 +83,6 @@ async function readCsvFileLastDataCovidBrazil(pathToReadFile){
 
         throw `Ocorreu um erro inesperado quando a API tentou ler os dados obtidos da COVID19 no arquivo CSV. Error: ${error}.`;
     }
-}
-
-/**
- * Função responsável por gravar o nosso arquivo resultado 
- * da oparação de ETL dos dados da covid no brasil por cidade.
- * 
- * @param {*} pathToSave 
- */
-async function writeFileResultCsv(pathToSave){
-    
-    //Obtendo os dados
-    const data = await DataCovidInBrazilService.selectAllDataCovidInBrazil();
-
-    //Escrevendo o CSV
-    let csvFile = "";
-    csvFile += "homelat,homelon,homecontinent,n" + os.EOL;
-    
-    for(i = 0; i < data.length; i++){
-        csvFile = csvFile + data[i].latitude + "," + data[i].longitude + "," + data[i].continent + "," + data[i].confirmadeCases + os.EOL
-    }
-
-    await new Promise((resolve, reject) => {
-        
-        fs.writeFileSync(pathToSave, csvFile, function (error, data){
-
-            if (error) {
-
-                throw `Ocorreu um erro ao tentar gravar o arquivo resultade da operação! Error : ${error}.`;
-                reject(false);
-            } 
-
-            resolve(true);         
-        });
-    });
 }
 
 /**
@@ -213,10 +180,16 @@ module.exports = async () => {
 
             //Gerando e armazenando novo aquivo CSV
             console.info("Iniciando gravação do arquivo de resultado.");
+            const resultWrite = await CsvService.writeCsvFileResultDataCovidBrazil(pathCsvFileResultDataCovidBrazil, await DataCovidInBrazilService.selectAllDataCovidInBrazil());
 
-            await writeFileResultCsv(pathCsvFileResultDataCovidBrazil);
+            if(resultWrite === true){
 
-            console.info("Arquivo de resultado terminado com sucesso!");
+                console.log('Processo concluido!');
+            } else {
+
+                console.log('O processo terminou com erros!');
+            }
+            
         }
     } catch (error) {
 
