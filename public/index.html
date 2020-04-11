@@ -1,0 +1,191 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<header>
+  <title>Dados por cidade COVI19 Brasil</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</header>
+
+<body>
+
+
+  <nav>
+    <div class="nav-wrapper light-green darken-4">
+      <a href="#" class="brand-logo">COVID19 Brasil</a> 
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="https://github.com/ThiagoTeodoro/brazil-covid-cities-api/tree/master">API</a></li>        
+      </ul>     
+    </div>
+  </nav>
+  
+  <br/>
+  <div style="display: flex; flex-direction: row; justify-content: flex-end;">
+    <h6 style="margin-right: 10px; margin-left: 10px;">By: Thiago Teodoro Rodrigues</h6>
+  </div>
+
+  <!-- Create an element where the map will take place -->
+  <div style="width: 1024px; height: 550px; margin-left: auto; margin-right: auto;">
+    <svg id="my_dataviz" width="1024" height="550"></svg>
+  </div>
+  <br/>  
+
+  <p class="flow-text" style="margin-right: 10px; margin-left: 10px;">
+
+    O projeto brazil-covid-cities-api disponível do <a href="https://github.com/ThiagoTeodoro/brazil-covid-cities-api/tree/master">GitHub</a> consiste em um agrupador que
+    coleta os dados da fonte <a href="https://brasil.io/dataset/covid19/caso">Brasil.io</a> e agrega valor geográfico aos dados para 
+    construção de visualizações.
+    <br/>
+    <br/>
+
+    Isso é feito por meio da comparação do código das cidades do IBGE com o código recebido da Brasil.io.
+    <br/>
+    <br/>
+
+    Aqui foi construída uma visualização fiel aos dados da API para demonstrar o que é possível fazer com esses dados.
+    <br/>
+    <br/>
+
+    <h6 style="margin-right: 10px; margin-left: 10px;">Tecnologias utilizadas.</h6>
+  
+    <br/>
+    
+    <ul class="collection" style="margin-right: 10px; margin-left: 10px;">
+      <li class="collection-item">NodeJS</li>
+      <li class="collection-item">MongoDB</li>
+      <li class="collection-item">HTML</li>
+      <li class="collection-item">CSS</li>
+      <li class="collection-item">JavaScript</li>
+      <li class="collection-item">D3</li>
+    </ul>
+
+  </p>
+
+
+  <!-- Load d3.js and the geo projection plugin -->
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+  <script>
+
+    // The svg
+    var svg = d3.select("svg"),
+      width = +svg.attr("width"),
+      height = +svg.attr("height");
+
+    // Map and projection
+    var projection = d3.geoMercator()
+      .center([-60, -16])                // GPS of location to zoom on
+      .scale(600)                       // This is like the zoom
+      .translate([width / 2, height / 2])
+
+    d3.queue()
+      .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")  // World shape
+      .defer(d3.csv, "https://brazil-covid-cities-api.herokuapp.com:3333/api/city/cases/data.csv") // Position of circles
+      .await(ready);
+
+    function ready(error, dataGeo, data) {
+
+      // Create a color scale
+      var allContinent = d3.map(data, function (d) { return (d.homecontinent) }).keys()
+      var color = d3.scaleOrdinal()
+        .domain(allContinent)
+        .range(d3.schemePaired);
+
+      // Add a scale for bubble size
+      var valueExtent = d3.extent(data, function (d) { return +d.n; })
+      var size = d3.scaleSqrt()
+        .domain(valueExtent)  // What's in the data
+        .range([1, 20])  // Size in pixel
+
+      // Draw the map
+      svg.append("g")
+        .selectAll("path")
+        .data(dataGeo.features)
+        .enter()
+        .append("path")
+        .attr("fill", "#b8b8b8")
+        .attr("d", d3.geoPath()
+          .projection(projection)
+        )
+        .style("stroke", "none")
+        .style("opacity", .3)
+
+      // Add circles:
+      svg
+        .selectAll("myCircles")
+        .data(data.sort(function (a, b) { return +b.n - +a.n }).filter(function (d, i) { return i < 1000 }))
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return projection([+d.homelon, +d.homelat])[0] })
+        .attr("cy", function (d) { return projection([+d.homelon, +d.homelat])[1] })
+        .attr("r", function (d) { return size(+d.n) })
+        //.style("fill", function(d){ return color(d.homecontinent) })//Essa cor é por escala de continente vou trocar para vemelhor fixo
+        .style("fill", function (d) { return "#c4302B" })
+        .attr("stroke", function (d) { if (d.n > 2000) { return "black" } else { return "none" } })
+        .attr("stroke-width", 1)
+        .attr("fill-opacity", .4)
+
+      // Add title and explanation
+      svg
+        .append("text")
+        .attr("text-anchor", "end")
+        .style("fill", "black")
+        .attr("x", width - 10)
+        .attr("y", height - 30)
+        .attr("width", 90)
+        .html("COVID19 - BRASIL")
+        .style("font-size", 14)
+
+
+      // --------------- //
+      // ADD LEGEND //
+      // --------------- //
+
+      // Add legend: circles
+      var valuesToShow = [200, 8000, 25000] //Esse numero só é fiel na escala 1/20 se mexer na escala tem que refazer os numeros
+      var xCircle = 40
+      var xLabel = 90
+      svg
+        .selectAll("legend")
+        .data(valuesToShow)
+        .enter()
+        .append("circle")
+        .attr("cx", xCircle)
+        .attr("cy", function (d) { return height - size(d) })
+        .attr("r", function (d) { return size(d) })
+        .style("fill", "none")
+        .attr("stroke", "black")
+
+      // Add legend: segments
+      svg
+        .selectAll("legend")
+        .data(valuesToShow)
+        .enter()
+        .append("line")
+        .attr('x1', function (d) { return xCircle + size(d) })
+        .attr('x2', xLabel)
+        .attr('y1', function (d) { return height - size(d) })
+        .attr('y2', function (d) { return height - size(d) })
+        .attr('stroke', 'black')
+        .style('stroke-dasharray', ('2,2'))
+
+      // Add legend: labels
+      svg
+        .selectAll("legend")
+        .data(valuesToShow)
+        .enter()
+        .append("text")
+        .attr('x', xLabel)
+        .attr('y', function (d) { return height - size(d) })
+        .text(function (d) { return d })
+        .style("font-size", 10)
+        .attr('alignment-baseline', 'middle')
+    }
+
+  </script>
+</body>
+
+
+</html>

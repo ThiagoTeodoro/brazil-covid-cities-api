@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const JobDowloadedCsv = require('../JobDowloadedCsv');
+const JobDowloadedAndTransformationCsvDataCovidInBrazil = require('../JobDowloadedAndTransformationCsvDataCovidInBrazil');
 
 
 module.exports = () => {
@@ -10,12 +10,12 @@ module.exports = () => {
      * Agendamento da Job que realiza o Downloaded do CSV
      * para a API trabalhar.
      * 
-     * Execução de 15 em 15 mim
+     * Execução de 20 em 20 mim
      * 
      */
-    cron.schedule("0 */1 * * * *", () => {
+    cron.schedule("0 */20 * * * *", async () => {
         
-        JobDowloadedCsv();
+        await JobDowloadedAndTransformationCsvDataCovidInBrazil();
     },
     { 
         scheduled: true, 

@@ -1,3 +1,4 @@
+//Imports
 const express = require('express');
 const cors = require('cors');
 const routes = require('./routes');
@@ -7,6 +8,8 @@ const app = express();
 
 //Permitindo requisições de todas as origens
 app.use(cors());
+
+app.use(express.static('public'));
 
 //Definindo tipo padrão de retorno
 app.use(express.json());

@@ -1,3 +1,4 @@
+//Imports
 const express = require('express');
 
 //Controllers
@@ -8,7 +9,8 @@ const CasesCityController = require('./controllers/CasesCityController');
 const routes = express.Router();
 
 //Rota para obter o numero de casos por cidade.
-routes.get('/api/city/cases', CasesCityController.data);
+routes.get('/api/city/cases/data.csv', CasesCityController.data);
+routes.get('/api/city/cases/json', CasesCityController.index);
 
 
 
