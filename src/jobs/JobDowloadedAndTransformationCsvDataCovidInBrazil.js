@@ -123,7 +123,7 @@ module.exports = async () => {
                             if(actualDataSaved){
 
                                 //Verificando se a data do dado que tá chegando é maior da que eu tenho no banco de dados
-                                if(lastDataCovidBrazil[i].date > actualDataSaved.date ){
+                                if(lastDataCovidBrazil[i].date >= actualDataSaved.date && actualDataSaved.confirmadeCases != lastDataCovidBrazil[i].confirmadeCases){
 
                                     console.info(`Atualizando dados da cidade : ${actualDataSaved.nameCity}`);
 
