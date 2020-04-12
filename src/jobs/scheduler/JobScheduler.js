@@ -10,10 +10,10 @@ module.exports = () => {
      * Agendamento da Job que realiza o Downloaded do CSV
      * para a API trabalhar.
      * 
-     * Execução de 20 em 20 mim
+     * Execução de 10 em 10 mim
      * 
      */
-    cron.schedule("0 */20 * * * *", async () => {
+    cron.schedule("0 */10 * * * *", async () => {
         
         await JobDowloadedAndTransformationCsvDataCovidInBrazil();
     },

@@ -121,9 +121,9 @@ module.exports = async () => {
                             const actualDataSaved = await DataCovidInBrazilService.selectByIbgeCode(lastDataCovidBrazil[i].city_ibge_code);
                             
                             if(actualDataSaved){
-
+                                
                                 //Verificando se a data do dado que tá chegando é maior da que eu tenho no banco de dados
-                                if(lastDataCovidBrazil[i].date >= actualDataSaved.date && actualDataSaved.confirmadeCases != lastDataCovidBrazil[i].confirmadeCases){
+                                if(new Date(lastDataCovidBrazil[i].date) >= new Date(actualDataSaved.date) && actualDataSaved.confirmadeCases != lastDataCovidBrazil[i].confirmadeCases){
 
                                     console.info(`Atualizando dados da cidade : ${actualDataSaved.nameCity}`);
 
