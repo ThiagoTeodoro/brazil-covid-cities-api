@@ -9,6 +9,7 @@ const app = express();
 //Permitindo requisições de todas as origens
 app.use(cors());
 
+//Pasta com os arquivos estáticos disponiveis na WEB da sua aplicação. Nossa View está aqui por exemplo no index.html
 app.use(express.static('public'));
 
 //Definindo tipo padrão de retorno
